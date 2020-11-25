@@ -1,6 +1,6 @@
 .vscode
-.log
+**/.log
 
-/bin
-/obj
-/results
+**/bin/
+**/obj/
+**/BenchmarkDotNet.Artifacts
