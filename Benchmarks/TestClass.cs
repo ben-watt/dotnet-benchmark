@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
@@ -26,5 +28,23 @@ namespace benchmark_dotnet
 
         [Benchmark]
         public string CallerMemberNameGeneric() => MethodHelpers.CallerMemberName<TestClass>();
+
+        public async Task<string[]> TestNameOutput()
+        {
+            return new List<string>()
+            {
+                MethodHelpers.GetCurrentMethod(),
+                MethodHelpers.GetCurrentMethod(false),
+                MethodHelpers.StackFrame(true),
+                MethodHelpers.StackFrame(false),
+                MethodHelpers.CallerMemberName(nameof(benchmark_dotnet), nameof(TestClass)),
+                MethodHelpers.CallerMemberName<TestClass>()
+            }.ToArray();
+        }
+
+        public string[] TestFuncNameOutput(Func<string[]> func)
+        {
+            return func();
+        }
     }
 }

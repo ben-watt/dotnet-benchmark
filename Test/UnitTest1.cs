@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using benchmark_dotnet;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Test
 {
@@ -47,6 +50,55 @@ namespace Test
         public void CallMemberNameGeneric()
         {
             Assert.Equal("benchmark_dotnet.testclass.callermembernamegeneric", _sut.CallerMemberNameGeneric());
+        }
+
+        [Fact]
+        public async Task TestNameOutput()
+        {
+            var expectedOutput = new List<string>() {
+                "benchmark_dotnet.testclass+<testnameoutput>d__6.movenext",
+                "benchmark_dotnet.testclass+<testnameoutput>d__6.movenext",
+                "benchmark_dotnet.testclass+<testnameoutput>d__6.movenext",
+                "benchmark_dotnet.testclass+<testnameoutput>d__6.movenext",
+                "benchmark_dotnet.testclass.testnameoutput",
+                "benchmark_dotnet.testclass.testnameoutput"
+            };
+
+            var result = await _sut.TestNameOutput();
+
+            for(int i = 0; i < result.Length; i++)
+            {
+                Assert.Equal(expectedOutput[i], result[i]);
+            }
+        }
+
+        [Fact]
+        public void TestFuncNameOutput()
+        {
+            var expectedOutput = new List<string>() {
+                "test.unittest1+<>c.<testfuncnameoutput>b__9_0",
+                "test.unittest1+<>c.<testfuncnameoutput>b__9_0",
+                "test.unittest1+<>c.<testfuncnameoutput>b__9_0",
+                "test.unittest1+<>c.<testfuncnameoutput>b__9_0",
+                "benchmark_dotnet.testclass.testfuncnameoutput",
+                "benchmark_dotnet.testclass.testfuncnameoutput"
+            };
+
+            var result = _sut.TestFuncNameOutput(() =>
+                new List<string>()
+                {
+                    MethodHelpers.GetCurrentMethod(),
+                    MethodHelpers.GetCurrentMethod(false),
+                    MethodHelpers.StackFrame(true),
+                    MethodHelpers.StackFrame(false),
+                    MethodHelpers.CallerMemberName(nameof(benchmark_dotnet), nameof(TestClass)),
+                    MethodHelpers.CallerMemberName<TestClass>()
+                }.ToArray());
+
+            for(int i = 0; i < result.Length; i++)
+            {
+                Assert.Equal(expectedOutput[i], result[i]);
+            }
         }
     }
 }
